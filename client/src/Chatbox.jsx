@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 
+import './styles/Chatbox.css'
+
 export default class Chatbox extends Component {
   state = {
     message: ''
   }
 
-  componentDidMount = () => {
-  }
-  
   onChange = e => {
     this.setState({ [e.target.name]: e.target.value })
   }
@@ -20,8 +19,8 @@ export default class Chatbox extends Component {
 
   render() {
     return (
-      <div>
-        <ul>
+      <div className='chatContainer'>
+        <ul className='chatMessages'>
           {
             this.props.messages.map((message, key) => {
               return (<li key={key}>{message.user}: {message.msg}</li>)
@@ -33,7 +32,7 @@ export default class Chatbox extends Component {
           <button onSubmit={this.sendMsg} onClick={this.sendMsg}>SEND</button>
         </form>
         {this.props.users.map((user, key) => {
-          return (`${user}, `)
+          return <strong>{`${user}${key !== (this.props.users.length - 1) ? ',' : ''} `}</strong>
         })}are in the chat.
       </div>
     )

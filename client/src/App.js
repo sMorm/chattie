@@ -4,9 +4,9 @@ import io from 'socket.io-client';
 import CreateUser from './CreateUser.jsx'
 import Chatbox from './Chatbox.jsx'
 
-import './App.css';
+import './styles/App.css';
 
-const socket = io('http://localhost:5000', {'forceNew': true});
+const socket = io('http://10.253.87.191:5000/', {'forceNew': true});
 
 class App extends Component {
   state = {
@@ -16,22 +16,13 @@ class App extends Component {
   }
 
   componentDidMount = () => {
-    socket.on('connection', res => console.log(res))
-
-    socket.on('message', newmsg => {
+    socket.on('new-message', newmsg => {
       const { messages } = this.state
       messages.push(newmsg)
       this.setState({ messages })
     })
 
-    socket.on('new-user', users => {
-      this.setState({ users })
-    })
-  }
-
-  componentWillUnmount = () => {
-    if(this.state.user !== '')
-      socket.emit('disconnect', this.state.user)
+    socket.on('get-users', users => this.setState({ users }))
   }
   
   createUser = user => {
@@ -39,19 +30,18 @@ class App extends Component {
     socket.emit('new-user', user)
   }
 
-  sendMsg = msg => {
-    const { user } = this.state
-    socket.emit('message', { msg, user } )
-  }
+  sendMsg = msg => msg !== '' && socket.emit('send-message', msg )
 
   render() {
     return (
-      <div className="App">
-      {
-        this.state.user !== ''
-        ? <Chatbox sendMsg={this.sendMsg} messages={this.state.messages} users={this.state.users} />
-        : <CreateUser createUser={this.createUser} />
-      }
+      <div className="appContainer">
+        <div className="appContent">
+          {
+            this.state.user !== ''
+            ? <Chatbox sendMsg={this.sendMsg} messages={this.state.messages} users={this.state.users} />
+            : <CreateUser createUser={this.createUser} />
+          }
+        </div>
       </div>
     );
   }

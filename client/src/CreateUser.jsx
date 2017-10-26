@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import io from 'socket.io-client';
+
+import './styles/CreateUser.css'
 
 export default class CreateUser extends Component {
   state = {
@@ -17,9 +18,9 @@ export default class CreateUser extends Component {
 
   render() {
     return (
-      <div>
-      <form onSubmit={this.createUser}>
-        <label>Enter Your Name</label>  
+      <div className="createUserContainer">
+      <form onSubmit={this.createUser} className="createUserForm">
+        <label>USERNAME</label>  
         <input type="text" value={this.state.user} onChange={this.onChange} name="user"/>
       </form>
       </div>

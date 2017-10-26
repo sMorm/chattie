@@ -1,0 +1,14 @@
+.createUserContainer {
+}
+.createUserForm input {
+  border: none;
+  border-bottom: solid 2px #2E4053;
+  font-size: 24px;
+  outline: none;
+  padding-top: 1em;
+  font-weight: 300;
+}
+.createUserForm label {
+  display: block;
+  letter-spacing: 2px;
+}

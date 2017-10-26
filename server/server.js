@@ -6,44 +6,45 @@ import http from 'http'
 
 /**
  * Wrap express with HTTP, then wrap the HTTP server with socket.io
+ * So when declaring what port to listen to, use the most parent,
+ * which in this case it's @io
  */
 const app = express()
 const server = http.Server(app)
-const socket = new SocketIO(server)
+const io = new SocketIO(server)
 const PORT = process.env.PORT || 5000
 
+// Fun CORS stuff :)
 app.use(cors())
 
-app.get('/', (req, res) => {
-  res.send('Chattie API Online')
-})
+app.get('/', (req, res) => res.send('Chattie API Online 👻'))
 
 let messages = []
 let users = []
-let clients = {}
-socket.on('connection', socket => {
-  console.log(socket.id)
-  console.log('User Connected$')
+let clients = []
 
-  socket.emit('new-user', users)
+io.on('connection', socket => {
+  clients.push(socket)
+  console.log(`${clients.length} user(s) connected`)
   
   socket.on('new-user', user => {
-    users.push(user)
-    socket.emit('new-user', users)
-    socket.broadcast.emit('new-user', users)
+    socket.username = user;
+    users.push(socket.username);
+    io.emit('get-users', users)
+    io.emit('new-message', {msg: 'has joined the chat!', user: socket.username})
   })
 
-  socket.on('message', msg => {
-    socket.emit('message', msg)
-    socket.broadcast.emit('message', msg);
+  socket.on('send-message', msg => {
+    io.emit('new-message', { msg, user: socket.username })
   })
 
-  socket.on('disconnect', user => {
-    console.log(user + "left")
-    console.log('One Socket disconnected 🙀')
+  socket.on('disconnect', data => {
+    clients.splice(clients.indexOf(socket), 1)
+    users.splice(clients.indexOf(socket.username), 1)
+    console.log(`disconnected, ${clients.length} sockets still connected`)
   })
 })
 
 // server wraps express, so listen with http server
-server.listen(PORT, () => console.log(`Started Listening @ ${PORT}`))
+io.listen(PORT, () => console.log(`Started Listening @ ${PORT}`))
 

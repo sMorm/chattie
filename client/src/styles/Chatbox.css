@@ -1,0 +1,21 @@
+.chatMessages {
+  overflow: scroll;
+  height: calc(65vh);
+}
+
+.chatMessages ul {
+  padding: 0;
+  list-style-type: none;
+  -webkit-padding-start: none;
+}
+
+.chatMessages li {
+  list-style: none;
+  animation: fade 0.5s forwards;
+  transform: all 0.5s;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
